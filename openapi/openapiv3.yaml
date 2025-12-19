@@ -11518,6 +11518,11 @@ components:
           $ref: '#/components/schemas/Meta'
         input:
           $ref: '#/components/schemas/Input'
+        completionCallbacks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Callback'
+          description: Callbacks to be called by the server when this update reaches a terminal state.
       description: The client request that triggers a Workflow Update.
     RequestCancelActivityExecutionRequest:
       type: object
@@ -15973,6 +15978,11 @@ components:
           description: |-
             The message payload of the original request message that initiated this
              update.
+        completionCallbacks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Callback'
+          description: Completion callbacks attached when this update was started.
     WorkflowExecutionUpdateAdmittedEventAttributes:
       type: object
       properties:

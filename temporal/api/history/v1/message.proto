@@ -880,6 +880,8 @@ message WorkflowExecutionUpdateAcceptedEventAttributes {
     // The message payload of the original request message that initiated this
     // update.
     temporal.api.update.v1.Request accepted_request = 4;
+    // Completion callbacks attached when this update was started.
+    repeated temporal.api.common.v1.Callback completion_callbacks = 5;
 }
 
 message WorkflowExecutionUpdateCompletedEventAttributes {

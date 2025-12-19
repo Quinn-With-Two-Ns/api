@@ -10120,6 +10120,14 @@
                   "description": "The arguments to pass to the named Update handler."
                 }
               }
+            },
+            "completionCallbacks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "$ref": "#/definitions/v1Callback"
+              },
+              "description": "Callbacks to be called by the server when this update reaches a terminal state."
             }
           },
           "description": "The request information that will be delivered all the way down to the\nWorkflow Execution.",
@@ -10299,6 +10307,14 @@
         },
         "input": {
           "$ref": "#/definitions/v1Input"
+        },
+        "completionCallbacks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Callback"
+          },
+          "description": "Callbacks to be called by the server when this update reaches a terminal state."
         }
       },
       "description": "The client request that triggers a Workflow Update."
@@ -18516,6 +18532,14 @@
         "acceptedRequest": {
           "$ref": "#/definitions/apiupdatev1Request",
           "description": "The message payload of the original request message that initiated this\nupdate."
+        },
+        "completionCallbacks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Callback"
+          },
+          "description": "Completion callbacks attached when this update was started."
         }
       }
     },
