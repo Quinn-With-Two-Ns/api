@@ -881,6 +881,7 @@ message WorkflowExecutionUpdateAcceptedEventAttributes {
     // update.
     temporal.api.update.v1.Request accepted_request = 4;
     // Completion callbacks attached when this update was started.
+    // TODO(quinn) maybe not needed
     repeated temporal.api.common.v1.Callback completion_callbacks = 5;
 }
 

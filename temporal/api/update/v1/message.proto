@@ -64,6 +64,8 @@ message Request {
     Input input = 2;
     // Callbacks to be called by the server when this update reaches a terminal state.
     repeated temporal.api.common.v1.Callback completion_callbacks = 3;
+     // Links to be associated with this update.
+    repeated temporal.api.common.v1.Link links = 4;
 }
 
 // An Update protocol message indicating that a Workflow Update has been rejected.
