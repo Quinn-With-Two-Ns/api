@@ -181,6 +181,8 @@ message Callback {
         string url = 1;
         // Header to attach to callback request.
         map<string, string> header = 2;
+        // Standard token to use for completion.
+        string token = 3;
     }
 
     // Callbacks to be delivered internally within the system.
@@ -240,9 +242,15 @@ message Link {
         string job_id = 1;
     }
 
+    // A link to a durable callback execution
+    message CallbackExecution {
+        string callback_id = 1;
+    }
+
     oneof variant {
         WorkflowEvent workflow_event = 1;
         BatchJob batch_job = 2;
+        CallbackExecution callback_execution = 3;
     }
 }
 
