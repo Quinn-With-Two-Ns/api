@@ -1211,6 +1211,11 @@ paths:
           description: Run ID of the callback execution to describe. If empty, the latest run will be described.
           schema:
             type: string
+        - name: includeInput
+          in: query
+          description: Include the input field in the response.
+          schema:
+            type: boolean
         - name: includeOutcome
           in: query
           description: Include the outcome (result/failure) in the response if the callback has completed.
@@ -1247,7 +1252,7 @@ paths:
         StartCallbackExecution starts a new standalone callback execution.
 
          Returns a `CallbackExecutionAlreadyStarted` error if a callback already exists with the same
-         callback ID in this namespace.
+         callback ID in this namespace, either in running or terminal states.
       operationId: StartCallbackExecution
       parameters:
         - name: namespace
@@ -5718,6 +5723,11 @@ paths:
           description: Run ID of the callback execution to describe. If empty, the latest run will be described.
           schema:
             type: string
+        - name: includeInput
+          in: query
+          description: Include the input field in the response.
+          schema:
+            type: boolean
         - name: includeOutcome
           in: query
           description: Include the outcome (result/failure) in the response if the callback has completed.
@@ -5754,7 +5764,7 @@ paths:
         StartCallbackExecution starts a new standalone callback execution.
 
          Returns a `CallbackExecutionAlreadyStarted` error if a callback already exists with the same
-         callback ID in this namespace.
+         callback ID in this namespace, either in running or terminal states.
       operationId: StartCallbackExecution
       parameters:
         - name: namespace
@@ -9570,6 +9580,7 @@ components:
           description: |-
             Deliver a failed Nexus operation completion with this failure.
              If set, the callback delivers a failed completion to the target URL.
+             If CanceledFailureInfo is set, the target operation is resolved is canceled instead of failed.
       description: |-
         The Nexus completion data that a standalone callback execution will deliver to its target URL.
          Exactly one of success or failure should be set.
@@ -9588,17 +9599,13 @@ components:
           description: Information on how this callback should be invoked (e.g. its URL and type).
         state:
           enum:
-            - CALLBACK_STATE_UNSPECIFIED
-            - CALLBACK_STATE_STANDBY
-            - CALLBACK_STATE_SCHEDULED
-            - CALLBACK_STATE_BACKING_OFF
-            - CALLBACK_STATE_FAILED
-            - CALLBACK_STATE_SUCCEEDED
-            - CALLBACK_STATE_BLOCKED
-            - CALLBACK_STATE_CANCELED
-            - CALLBACK_STATE_TERMINATED
+            - CALLBACK_EXECUTION_STATE_UNSPECIFIED
+            - CALLBACK_EXECUTION_STATE_RUNNING
+            - CALLBACK_EXECUTION_STATE_SUCCEEDED
+            - CALLBACK_EXECUTION_STATE_FAILED
+            - CALLBACK_EXECUTION_STATE_TERMINATED
           type: string
-          description: Current state of the callback.
+          description: Current state of the callback execution.
           format: enum
         attempt:
           type: integer
@@ -9655,17 +9662,13 @@ components:
           description: Run ID of the callback execution.
         state:
           enum:
-            - CALLBACK_STATE_UNSPECIFIED
-            - CALLBACK_STATE_STANDBY
-            - CALLBACK_STATE_SCHEDULED
-            - CALLBACK_STATE_BACKING_OFF
-            - CALLBACK_STATE_FAILED
-            - CALLBACK_STATE_SUCCEEDED
-            - CALLBACK_STATE_BLOCKED
-            - CALLBACK_STATE_CANCELED
-            - CALLBACK_STATE_TERMINATED
+            - CALLBACK_EXECUTION_STATE_UNSPECIFIED
+            - CALLBACK_EXECUTION_STATE_RUNNING
+            - CALLBACK_EXECUTION_STATE_SUCCEEDED
+            - CALLBACK_EXECUTION_STATE_FAILED
+            - CALLBACK_EXECUTION_STATE_TERMINATED
           type: string
-          description: Current state of the callback.
+          description: Current state of the callback execution.
           format: enum
         createTime:
           type: string
@@ -9715,7 +9718,6 @@ components:
             - CALLBACK_STATE_FAILED
             - CALLBACK_STATE_SUCCEEDED
             - CALLBACK_STATE_BLOCKED
-            - CALLBACK_STATE_CANCELED
             - CALLBACK_STATE_TERMINATED
           type: string
           format: enum
@@ -11556,8 +11558,6 @@ components:
           $ref: '#/components/schemas/Link_WorkflowEvent'
         batchJob:
           $ref: '#/components/schemas/Link_BatchJob'
-        callbackExecution:
-          $ref: '#/components/schemas/Link_CallbackExecution'
       description: |-
         Link can be associated with history events. It might contain information about an external entity
          related to the history event. For example, workflow A makes a Nexus call that starts workflow B:
@@ -11572,12 +11572,6 @@ components:
         A link to a built-in batch job.
          Batch jobs can be used to perform operations on a set of workflows (e.g. terminate, signal, cancel, etc).
          This link can be put on workflow history events generated by actions taken by a batch job.
-    Link_CallbackExecution:
-      type: object
-      properties:
-        callbackId:
-          type: string
-      description: A link to a durable callback execution
     Link_WorkflowEvent:
       type: object
       properties:
@@ -15025,9 +15019,6 @@ components:
           description: |-
             Identifier for this callback. Required. Must be unique among callbacks in the same namespace.
              If a callback with this ID already exists, the request will fail with CallbackExecutionAlreadyStarted.
-        runId:
-          type: string
-          description: Callback execution run ID, targets the latest run if run_id is empty.
         callback:
           allOf:
             - $ref: '#/components/schemas/Callback'
@@ -15048,7 +15039,7 @@ components:
             - $ref: '#/components/schemas/CallbackExecutionCompletion'
           description: |-
             The Nexus completion data to deliver to the callback URL.
-             Required. Contains either a successful result payload or a failure.
+             Contains either a successful result payload or a failure.
     StartCallbackExecutionResponse:
       type: object
       properties:
