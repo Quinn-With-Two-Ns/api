@@ -194,10 +194,18 @@ message Callback {
         bytes data = 1;
     }
 
+    message Worker {
+        // Task queue to which the callback should be delivered. The service will attempt to deliver the callback to a worker polling this task queue.
+        string task_queue = 1;
+        // Name of the handler to invoke on the worker side upon callback delivery.
+        string handler = 2;
+    }
+
     reserved 1; // For a generic callback mechanism to be added later.
     oneof variant {
         Nexus nexus = 2;
         Internal internal = 3;
+        Worker worker = 4;
     }
 
     // Links associated with the callback. It can be used to link to underlying resources of the

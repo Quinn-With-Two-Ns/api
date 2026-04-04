@@ -9738,20 +9738,6 @@
       },
       "description": "Target an external server by URL.\nAt a later point, this will support providing credentials, in the meantime, an http.RoundTripper can be injected\ninto the server to modify the request."
     },
-    "EndpointTargetWorker": {
-      "type": "object",
-      "properties": {
-        "namespace": {
-          "type": "string",
-          "description": "Namespace to route requests to."
-        },
-        "taskQueue": {
-          "type": "string",
-          "description": "Nexus task queue to route requests to."
-        }
-      },
-      "description": "Target a worker polling on a Nexus task queue in a specific namespace."
-    },
     "LinkBatchJob": {
       "type": "object",
       "properties": {
@@ -12724,6 +12710,9 @@
         "internal": {
           "$ref": "#/definitions/CallbackInternal"
         },
+        "worker": {
+          "$ref": "#/definitions/v1CallbackWorker"
+        },
         "links": {
           "type": "array",
           "items": {
@@ -12944,6 +12933,19 @@
       ],
       "default": "CALLBACK_STATE_UNSPECIFIED",
       "description": "State of a callback.\n\n - CALLBACK_STATE_UNSPECIFIED: Default value, unspecified state.\n - CALLBACK_STATE_STANDBY: Callback is standing by, waiting to be triggered.\n - CALLBACK_STATE_SCHEDULED: Callback is in the queue waiting to be executed or is currently executing.\n - CALLBACK_STATE_BACKING_OFF: Callback has failed with a retryable error and is backing off before the next attempt.\n - CALLBACK_STATE_FAILED: Callback has failed.\n - CALLBACK_STATE_SUCCEEDED: Callback has succeeded.\n - CALLBACK_STATE_BLOCKED: Callback is blocked (eg: by circuit breaker).\n - CALLBACK_STATE_TERMINATED: Callback was terminated via TerminateCallbackExecution. Only possible for standalone callbacks."
+    },
+    "v1CallbackWorker": {
+      "type": "object",
+      "properties": {
+        "taskQueue": {
+          "type": "string",
+          "description": "Task queue to which the callback should be delivered. The service will attempt to deliver the callback to a worker polling this task queue."
+        },
+        "handler": {
+          "type": "string",
+          "description": "Name of the handler to invoke on the worker side upon callback delivery."
+        }
+      }
     },
     "v1CancelExternalWorkflowExecutionFailedCause": {
       "type": "string",
@@ -14005,13 +14007,27 @@
       "type": "object",
       "properties": {
         "worker": {
-          "$ref": "#/definitions/EndpointTargetWorker"
+          "$ref": "#/definitions/v1EndpointTargetWorker"
         },
         "external": {
           "$ref": "#/definitions/EndpointTargetExternal"
         }
       },
       "description": "Target to route requests to."
+    },
+    "v1EndpointTargetWorker": {
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "type": "string",
+          "description": "Namespace to route requests to."
+        },
+        "taskQueue": {
+          "type": "string",
+          "description": "Nexus task queue to route requests to."
+        }
+      },
+      "description": "Target a worker polling on a Nexus task queue in a specific namespace."
     },
     "v1EventType": {
       "type": "string",

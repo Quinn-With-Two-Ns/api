@@ -9557,6 +9557,8 @@ components:
           $ref: '#/components/schemas/Callback_Nexus'
         internal:
           $ref: '#/components/schemas/Callback_Internal'
+        worker:
+          $ref: '#/components/schemas/Callback_Worker'
         links:
           type: array
           items:
@@ -9793,6 +9795,15 @@ components:
         token:
           type: string
           description: Standard token to use for completion.
+    Callback_Worker:
+      type: object
+      properties:
+        taskQueue:
+          type: string
+          description: Task queue to which the callback should be delivered. The service will attempt to deliver the callback to a worker polling this task queue.
+        handler:
+          type: string
+          description: Name of the handler to invoke on the worker side upon callback delivery.
     CanceledFailureInfo:
       type: object
       properties:

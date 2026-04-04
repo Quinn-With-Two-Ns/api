@@ -10,6 +10,7 @@ option ruby_package = "Temporalio::Api::Nexus::V1";
 option csharp_namespace = "Temporalio.Api.Nexus.V1";
 
 import "google/protobuf/timestamp.proto";
+import "temporal/api/callback/v1/message.proto";
 import "temporal/api/common/v1/message.proto";
 import "temporal/api/enums/v1/nexus.proto";
 import "temporal/api/failure/v1/message.proto";
@@ -80,6 +81,18 @@ message CancelOperationRequest {
     string operation_token = 4;
 }
 
+// A request to process a worker callback.
+message CallbackRequest {
+    // Unique identifier of the callback within its namespace.
+    string callback_id = 1;
+    // Name of the handler to invoke on the worker side upon callback delivery.
+    string handler = 3;
+    // Information on how this callback should be invoked (e.g. its URL and type).
+    temporal.api.common.v1.Callback callback = 4;
+    // The completion data to deliver to the callback target.
+    temporal.api.callback.v1.CallbackExecutionCompletion completion = 5;
+}
+
 // A Nexus request.
 message Request {
     message Capabilities {
@@ -102,6 +115,7 @@ message Request {
     oneof variant {
         StartOperationRequest start_operation = 3;
         CancelOperationRequest cancel_operation = 4;
+        CallbackRequest callback = 5;
     }
 
     // The endpoint this request was addressed to before forwarding to the worker.
@@ -142,12 +156,17 @@ message StartOperationResponse {
 message CancelOperationResponse {
 }
 
+// Response variant for CallbackRequest.
+message CallbackResponse {
+}
+
 // A response indicating that the handler has successfully processed a request.
 message Response {
     // Variant must correlate to the corresponding Request's variant.
     oneof variant {
         StartOperationResponse start_operation = 1;
         CancelOperationResponse cancel_operation = 2;
+        CallbackResponse callback = 3;
     }
 }
 
